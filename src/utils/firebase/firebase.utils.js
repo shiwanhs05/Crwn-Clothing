@@ -1,7 +1,6 @@
-// Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import {getAuth, signInWithRedirect, signInWithPopup, GoogleAuthProvider, GithubAuthProvider} from "firebase/auth"; 
-import {getFirestore, doc, getDoc, setDoc, Firestore} from "firebase/firestore";
+import {getAuth, signInWithPopup, GoogleAuthProvider, createUserWithEmailAndPassword} from "firebase/auth"; 
+import {getFirestore, doc, getDoc, setDoc} from "firebase/firestore";
 // doc => instance of document, retrieve documents stored in the firestore database.
 // getDoc, setDoc => get and set the Document's data.
 
@@ -17,18 +16,18 @@ const firebaseConfig = {
 // Initialize Firebase
 const firebaseApp = initializeApp(firebaseConfig);
 
-const provider = new GoogleAuthProvider();
+const googleProvider = new GoogleAuthProvider();
 
-provider.setCustomParameters({
+googleProvider.setCustomParameters({
   prompt: "select_account",
 });
 
 export const auth = getAuth();
-export const SignInWithGooglePopup = () => signInWithPopup(auth, provider)
-
+export const SignInWithGooglePopup = () => signInWithPopup(auth, googleProvider);
 export const db = getFirestore();
-export const createUserDocumentFromAuth = async (userAuth) => 
+export const createUserDocumentFromAuth = async (userAuth, additionalInfo={}) => 
 {
+  if(!userAuth) return;
   const {uid} = userAuth;
   // Reference to the document in the firestore database
   const userDocRef = doc(db, "users", uid);
@@ -46,7 +45,8 @@ export const createUserDocumentFromAuth = async (userAuth) =>
       await setDoc(userDocRef, {
         displayName, 
         email,
-        createdAt
+        createdAt, 
+        ...additionalInfo
       })
     }
     catch(error)
@@ -56,4 +56,10 @@ export const createUserDocumentFromAuth = async (userAuth) =>
   }
   return userDocRef;
 
+};
+
+export const createAuthUserWithEmailAndPassword = async (email, password) => 
+{
+  if(!email || !password) return;
+  return await createUserWithEmailAndPassword(auth, email, password);
 }
