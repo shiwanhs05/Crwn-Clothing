@@ -1,5 +1,6 @@
 import { initializeApp } from "firebase/app";
-import {getAuth, signInWithPopup, GoogleAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword} from "firebase/auth"; 
+import {getAuth, signInWithPopup, GoogleAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "firebase/auth"; 
+
 import {getFirestore, doc, getDoc, setDoc} from "firebase/firestore";
 // doc => instance of document, retrieve documents stored in the firestore database.
 // getDoc, setDoc => get and set the Document's data.
@@ -69,3 +70,11 @@ export const signInAuthUserWithEmailAndPassword = async (email, password) =>
   if(!email || !password) return;
   return await signInWithEmailAndPassword(auth, email, password);
 }
+export const signOutUser = async () => {
+  return await signOut(auth);
+}
+
+export const onAuthStateChangedListener = (callback) =>
+{
+  return onAuthStateChanged(auth, callback);
+} 
