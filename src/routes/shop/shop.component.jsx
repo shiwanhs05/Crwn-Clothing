@@ -1,10 +1,17 @@
-import { Fragment } from "react";
 import { Link } from "react-router-dom";
+import { useContext } from "react";
+import { ProductsContext } from "../../contexts/products.context";
+import ProductCard from "../../components/product-card/product-card.component";
+import "./shop.styles.scss";
 const Shop = () => {
-  return <Fragment>
-  <h1>Hi, I'm the shop</h1>
-  <Link to={-1} style={{color: "blue"}}>{"   "}Back</Link>
-  </Fragment>
+  const {products} = useContext(ProductsContext);
+  return <div className="products-container">
+  {
+    products.map((product) =>{
+      return <ProductCard product={product} key={product.id}/>
+    })
+  }
+  </div>
 };
 
 export default Shop;
