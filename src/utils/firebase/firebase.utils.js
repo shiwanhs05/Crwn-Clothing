@@ -1,7 +1,6 @@
 import { initializeApp } from "firebase/app";
 import {getAuth, signInWithPopup, GoogleAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "firebase/auth"; 
-
-import {getFirestore, doc, getDoc, setDoc} from "firebase/firestore";
+import {getFirestore, doc, getDoc, setDoc, collection, writeBatch, query, getDocs} from "firebase/firestore";
 // doc => instance of document, retrieve documents stored in the firestore database.
 // getDoc, setDoc => get and set the Document's data.
 
@@ -16,6 +15,31 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const firebaseApp = initializeApp(firebaseConfig);
+export const db = getFirestore();
+export const addCollectionAndDocuments = async (collectionKey, objectsToAdd) => {
+  const collectionRef = collection(db, collectionKey);
+  const batch = writeBatch(db);
+
+  objectsToAdd.forEach((object) => 
+  {
+    const docRef = doc(collectionRef, object.title.toLowerCase());
+    batch.set(docRef, object);
+  });
+  await batch.commit();
+  console.log("done");
+};
+export const getCategoriesAndDocuments = async () => {
+  const collectionRef = collection(db, "categories");
+  const q = query(collectionRef);
+  const querySnapshot = await getDocs(q);
+  const categoryMap = querySnapshot.docs.reduce((acc, docSnapShot) => {
+    const {title, items} = docSnapShot.data();
+    acc[title.toLowerCase()] = items;
+    return acc;
+  }, {});
+  return categoryMap;
+};
+
 
 const googleProvider = new GoogleAuthProvider();
 
@@ -25,7 +49,7 @@ googleProvider.setCustomParameters({
 
 export const auth = getAuth();
 export const SignInWithGooglePopup = () => signInWithPopup(auth, googleProvider);
-export const db = getFirestore();
+
 export const createUserDocumentFromAuth = async (userAuth, additionalInfo={}) => 
 {
   if(!userAuth) return;
