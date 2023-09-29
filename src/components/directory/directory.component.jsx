@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router-dom";
 import DirectoryItem from "../directory-item/directory-item.component";
 
 import {Container} from "./directory.styles";
