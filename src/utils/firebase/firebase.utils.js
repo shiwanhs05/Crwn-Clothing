@@ -1,6 +1,9 @@
 import { initializeApp } from "firebase/app";
+
 import {getAuth, signInWithPopup, GoogleAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "firebase/auth"; 
+
 import {getFirestore, doc, getDoc, setDoc, collection, writeBatch, query, getDocs} from "firebase/firestore";
+
 // doc => instance of document, retrieve documents stored in the firestore database.
 // getDoc, setDoc => get and set the Document's data.
 
@@ -15,7 +18,9 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const firebaseApp = initializeApp(firebaseConfig);
+
 export const db = getFirestore();
+
 export const addCollectionAndDocuments = async (collectionKey, objectsToAdd) => {
   const collectionRef = collection(db, collectionKey);
   const batch = writeBatch(db);
@@ -28,6 +33,7 @@ export const addCollectionAndDocuments = async (collectionKey, objectsToAdd) => 
   await batch.commit();
   console.log("done");
 };
+
 export const getCategoriesAndDocuments = async () => {
   const collectionRef = collection(db, "categories");
   const q = query(collectionRef);
@@ -40,7 +46,6 @@ export const getCategoriesAndDocuments = async () => {
   return categoryMap;
 };
 
-
 const googleProvider = new GoogleAuthProvider();
 
 googleProvider.setCustomParameters({
@@ -48,6 +53,7 @@ googleProvider.setCustomParameters({
 });
 
 export const auth = getAuth();
+
 export const SignInWithGooglePopup = () => signInWithPopup(auth, googleProvider);
 
 export const createUserDocumentFromAuth = async (userAuth, additionalInfo={}) => 
@@ -94,6 +100,7 @@ export const signInAuthUserWithEmailAndPassword = async (email, password) =>
   if(!email || !password) return;
   return await signInWithEmailAndPassword(auth, email, password);
 }
+
 export const signOutUser = async () => {
   return await signOut(auth);
 }

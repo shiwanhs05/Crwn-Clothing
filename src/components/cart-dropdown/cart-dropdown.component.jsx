@@ -5,7 +5,7 @@ import CartItem from "../cart-item/cart-item.component";
 import {CartContext} from "../../contexts/cart.context";
 
 import Button from "../button/button.component";
-import "./cart-dropdown.styles.scss";
+import { Container, CartItems, EmptyMessage } from "./cart-dropdown.styles";
 
 
 const CartDropdown = () => 
@@ -16,14 +16,15 @@ const CartDropdown = () =>
     navigate("/checkout")
     setIsCartOpen(false);
   };
-  return <div className="cart-dropdown-container">
-  <div className="cart-items">
+  return <Container>
+  <CartItems>
   {
-    cartItems.map(item =>{
-      return <CartItem key={item.id} cartItem={item}/>})
+    cartItems.length ? (
+      cartItems.map(item =>{
+      return <CartItem key={item.id} cartItem={item}/>})) : (<EmptyMessage>Add items to cart</EmptyMessage>)
   }
-  </div>
+  </CartItems>
   <Button onClick={goToCheckoutHandler}>Proceed To Buy</Button>
-  </div>
+  </Container>
 }
 export default CartDropdown;
