@@ -31,7 +31,19 @@ h2 {
 p {
   font-weight: lighter;
   font-size: 16px;
-}`;
+}
+@media screen and (max-width: 672px)
+{
+  h2 {
+    font-size: 17.5px;
+  }
+  
+  p {;
+    font-size: 12.5px;
+  }
+}
+
+`;
 
 export const Container = styled.div`
 min-width: 30%;
