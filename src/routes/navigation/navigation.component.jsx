@@ -39,6 +39,7 @@ const isCartOpen = useSelector(selectIsCartOpen);
     }
     <CartIcon />
     </NavLinksContainer>
+    {/* checkout page => automatically closes dropdown */}
     {isCartOpen && <CartDropdown/>}
   </NavigationContainer>
   <Outlet/>
