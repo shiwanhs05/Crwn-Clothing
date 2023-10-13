@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 
-import {getAuth, signInWithPopup, GoogleAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "firebase/auth"; 
+import {getAuth, signInWithPopup, GoogleAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, signInWithRedirect } from "firebase/auth"; 
 
 import {getFirestore, doc, getDoc, setDoc, collection, writeBatch, query, getDocs} from "firebase/firestore";
 
@@ -34,8 +34,8 @@ export const addCollectionAndDocuments = async (collectionKey, objectsToAdd) => 
   console.log("done");
 };
 
-export const getCategoriesAndDocuments = async () => {
-  const collectionRef = collection(db, "categories");
+export const getCategoriesAndDocuments = async (categories) => {
+  const collectionRef = collection(db, categories);
   const q = query(collectionRef);
   const querySnapshot = await getDocs(q);
   return querySnapshot.docs.map((docSnapShot) => docSnapShot.data());
@@ -49,7 +49,8 @@ googleProvider.setCustomParameters({
 
 export const auth = getAuth();
 
-export const SignInWithGooglePopup = () => signInWithPopup(auth, googleProvider);
+// export const SignInWithGooglePopup = () => signInWithPopup(auth, googleProvider);
+export const SignInWithGoogleRedirect = () => signInWithRedirect(auth, googleProvider);
 
 export const createUserDocumentFromAuth = async (userAuth, additionalInfo={}) => 
 {
@@ -80,7 +81,7 @@ export const createUserDocumentFromAuth = async (userAuth, additionalInfo={}) =>
       console.log("Error while creating the user", error.message);
     }
   }
-  return userDocRef;
+  return userSnapshot;
 
 };
 
@@ -104,3 +105,14 @@ export const onAuthStateChangedListener = (callback) =>
 {
   return onAuthStateChanged(auth, callback);
 } 
+
+export const getCurrentUser = () => {
+  return new Promise((resolve, reject) => {
+    const unsubscribe = onAuthStateChanged(auth, (userAuth) => {
+      unsubscribe();
+      resolve(userAuth);
+    },
+    reject
+    );
+  })
+}
